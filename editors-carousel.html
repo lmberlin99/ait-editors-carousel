@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Главные редакторы журнала — карусель</title>
+<style>
+  /* ===== карусель главных редакторов (самодостаточная) ===== */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fafafa;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #222;
+  }
+
+  #editors-carousel {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f0f0f0;
+    box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  }
+
+  #editors-track {
+    display: flex;
+    transition: transform .5s ease-in-out;
+    will-change: transform;
+  }
+
+  #editors-track .slide {
+    flex: 0 0 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #editors-track .slide img {
+    display: block;
+    width: 100%;
+    height: 480px;
+    object-fit: contain;
+    background: #e8e8e8;
+  }
+
+  #editors-track .slide figcaption {
+    padding: 12px 16px;
+    font-size: .95rem;
+    line-height: 1.4;
+    color: #333;
+    background: #fff;
+    border-top: 1px solid #e5e5e5;
+    min-height: 44px;
+  }
+
+  /* стрелки */
+  .editors-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,.45);
+    color: #fff;
+    border: none;
+    font-size: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    transition: background .2s;
+  }
+  .editors-btn:hover { background: rgba(0,0,0,.75); }
+  .editors-prev { left: 12px; }
+  .editors-next { right: 12px; }
+
+  /* точки */
+  #editors-dots {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  #editors-dots button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,.6);
+    cursor: pointer;
+    padding: 0;
+    transition: background .2s, transform .2s;
+    pointer-events: auto;
+  }
+  #editors-dots button.active { background: #fff; transform: scale(1.3); }
+
+  @media (max-width: 600px) {
+    #editors-track .slide img { height: 260px; }
+    .editors-btn { width: 36px; height: 36px; font-size: 18px; }
+    #editors-track .slide figcaption { font-size: .88rem; padding: 10px 12px; }
+    #editors-dots { bottom: 8px; gap: 5px; }
+    #editors-dots button { width: 7px; height: 7px; }
+  }
+  @media (max-width: 480px) {
+    #editors-dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="editors-carousel">
+  <div id="editors-track">
+
+    <figure class="slide">
+      <img src="chermyshev.jpg" alt="Академик А. А. Чернышев" loading="lazy">
+      <figcaption>Академик А. А. Чернышев. Главный редактор с 1936 по 1938&nbsp;(источник: www.ras.ru)</figcaption>
+    </figure>
+
+    <figure class="slide">
+      <img src="kovalenkov.jpg" alt="Член-корреспондент АН СССР В. И. Коваленков" loading="lazy">
+      <figcaption>Член-корреспондент АН СССР В. И. Коваленков. Главный редактор с 1938 по 1951</figcaption>
+    </figure>
+
+    <figure class="slide">
+      <img src="trapeznikov.jpg" alt="Академик В. А. Трапезников" loading="lazy">
+      <figcaption>Академик В. А. Трапезников. Главный редактор с 1951 по 1988&nbsp;(источник: www.ipu.ru)</figcaption>
+    </figure>
+
+    <figure class="slide">
+      <img src="kuznetsov.jpg" alt="Академик Н. А. Кузнецов" loading="lazy">
+      <figcaption>Академик Н. А. Кузнецов. Главный редактор с 1989 по 2008. Фотограф Ольга Мерзлякова&nbsp;(scientificrussia.ru)</figcaption>
+    </figure>
+
+    <figure class="slide">
+      <img src="vasiliev.jpg" alt="Академик С. Н. Васильев" loading="lazy">
+      <figcaption>Академик С. Н. Васильев. Главный редактор с 2009 по 2020&nbsp;(источник: www.ipu.ru)</figcaption>
+    </figure>
+
+    <figure class="slide">
+      <img src="galyaev.jpg" alt="Член-корреспондент РАН А. А. Галяев" loading="lazy">
+      <figcaption>Член-корреспондент РАН А. А. Галяев. Главный редактор с октября 2020&nbsp;г. Фотограф Ольга Мерзлякова&nbsp;(scientificrussia.ru)</figcaption>
+    </figure>
+
+  </div>
+
+  <button class="editors-btn editors-prev" aria-label="Предыдущий редактор">&#10094;</button>
+  <button class="editors-btn editors-next" aria-label="Следующий редактор">&#10095;</button>
+
+  <div id="editors-dots"></div>
+</div>
+
+<script>
+(function () {
+  var carousel = document.getElementById('editors-carousel');
+  var track    = document.getElementById('editors-track');
+  var dotsBox  = document.getElementById('editors-dots');
+  var slides   = track.children;
+  var total    = slides.length;
+  var current  = 0;
+  var timer    = null;
+  var INTERVAL = 4000;
+
+  for (var i = 0; i < total; i++) {
+    (function (idx) {
+      var dot = document.createElement('button');
+      dot.setAttribute('aria-label', 'Перейти к редактору ' + (idx + 1));
+      dot.addEventListener('click', function () { goTo(idx); restart(); });
+      dotsBox.appendChild(dot);
+    })(i);
+  }
+  var dots = dotsBox.children;
+
+  function update() {
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    for (var i = 0; i < total; i++) {
+      dots[i].classList.toggle('active', i === current);
+    }
+  }
+
+  function goTo(index) { current = (index + total) % total; update(); }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function start() { stop(); timer = setInterval(next, INTERVAL); }
+  function restart() { start(); }
+
+  carousel.querySelector('.editors-next').addEventListener('click', function () { next(); restart(); });
+  carousel.querySelector('.editors-prev').addEventListener('click', function () { prev(); restart(); });
+
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+  carousel.addEventListener('focusin', stop);
+  carousel.addEventListener('focusout', start);
+
+  var startX = 0, isDragging = false;
+  track.addEventListener('touchstart', function (e) {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+    stop();
+  }, { passive: true });
+  track.addEventListener('touchend', function (e) {
+    if (!isDragging) return;
+    isDragging = false;
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) (dx < 0 ? next() : prev());
+    start();
+  }, { passive: true });
+
+  document.addEventListener('visibilitychange', function () {
+    document.hidden ? stop() : start();
+  });
+
+  update();
+  start();
+})();
+</script>
+
+</body>
+</html>
